@@ -54,6 +54,13 @@ function generateTemplate({ name, email, message }) {
 }
 
 app.post('/api/send-email', async (req, res) => {
+  const authHeader = req.headers['17321653f7b1a9a49d756823f18b7603527c3d57d55cc73d7cd9e3bca30e1538'];
+
+
+  if (authHeader !== process.env.GLENSCOTT_MAILER_API_KEY) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+
   const { name, email, subject, message } = req.body;
 
   if (!email || !subject || !message) {
