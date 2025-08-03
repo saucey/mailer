@@ -2,6 +2,7 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 const PORT = 3001;
@@ -84,11 +85,20 @@ app.post('/api/send-email', async (req, res) => {
   }
 });
 
+app.get('/api/ping', (req, res) => {
+  console.log('Ping endpoint hit');
+  res.send('pong');
+});
+
 // Fallback test endpoint using same template
 app.get('/api/test-email', async (req, res) => {
-  const authHeader = req.headers['17321653f7b1a9a49d756823f18b7603527c3d57d55cc73d7cd9e3bca30e1538'];
+  const authHeader = req.headers['mailer-api-key'];
 
-  if (authHeader !== process.env.GLENSCOTT_MAILER_API_KEY) {
+  console.log('Received key:', authHeader);
+  console.log('Expected key:', process.env.GLENSCOTT_MAILER_API_KEY);
+
+
+  if (authHeader !== process.env.GLENSCOTT_MAILER_API_KEY) { 
     return res.status(403).json({ error: 'Unauthorized' });
   }
 
@@ -117,5 +127,5 @@ app.get('/api/test-email', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Email API listening at http://localhost:${PORT}`);
+  console.log(`✅Email API listening at http://localhost:${PORT}`);
 });
