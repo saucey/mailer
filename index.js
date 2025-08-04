@@ -55,18 +55,18 @@ function generateTemplate({ name, email, message }) {
 }
 
 app.post('/api/send-email', async (req, res) => {
-  const authHeader = req.headers['17321653f7b1a9a49d756823f18b7603527c3d57d55cc73d7cd9e3bca30e1538'];
-
+  const authHeader = req.headers['x-api-key'];
 
   if (authHeader !== process.env.GLENSCOTT_MAILER_API_KEY) {
     return res.status(403).json({ error: 'Unauthorized' });
   }
 
-  const { name, email, subject, message } = req.body;
+  const { name, email, message } = req.body;
 
-  if (!email || !subject || !message) {
+  if (!name || !email || !message) {
     return res.status(400).json({ error: 'Missing required fields.' });
   }
+  const subject = '✅ | Website Visitor | New Customer Message';
 
   const mailOptions = {
     from: `"${name || 'Website Visitor'}" <${smtpUser}>`,
@@ -85,17 +85,10 @@ app.post('/api/send-email', async (req, res) => {
   }
 });
 
-app.get('/api/ping', (req, res) => {
-  console.log('Ping endpoint hit');
-  res.send('pong');
-});
 
 // Fallback test endpoint using same template
 app.get('/api/test-email', async (req, res) => {
   const authHeader = req.headers['mailer-api-key'];
-
-  console.log('Received key:', authHeader);
-  console.log('Expected key:', process.env.GLENSCOTT_MAILER_API_KEY);
 
 
   if (authHeader !== process.env.GLENSCOTT_MAILER_API_KEY) { 
